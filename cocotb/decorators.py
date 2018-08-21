@@ -461,6 +461,24 @@ def process_yield(value):
 
 
 @public
+class process_function(object):
+    """Equivalent of the function decorator for a process.
+    """
+    def __init__(self, func):
+        self._func = func
+        self._coro = coroutine(func)
+        self._log = SimLog("cocotb.process_function.%s" % self._func.__name__, id(self))
+
+    def __call__(self, *args, **kwargs):
+        return process_yield(self._coro(*args, **kwargs))
+
+    def __get__(self, obj, type=None):
+        """Permit the decorator to be used on class methods
+            and standalone functions"""
+        return self.__class__(self._func.__get__(obj, type))
+
+
+@public
 class process(object):
     """Decorator to apply to a function that allows it to behave like a
     coroutine without being a generator: instead of yield statements, use
@@ -493,6 +511,11 @@ class process(object):
         """Permit the decorator to be used on class methods
             and standalone functions"""
         return self.__class__(self._func.__get__(obj, type))
+
+
+# FIXME remove me
+external = process
+function = process_function
 
 
 @public
