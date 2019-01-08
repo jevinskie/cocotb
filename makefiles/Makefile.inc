@@ -29,6 +29,8 @@
 
 # Common makefile included by everything
 
+export SHELL := /bin/bash
+
 ifeq ($(SIM_ROOT),)
 export SIM_ROOT:=$(abspath $(dir $(lastword $(MAKEFILE_LIST)))/..)
 endif
