@@ -33,6 +33,7 @@ import os
 import sys
 import logging
 import inspect
+import threading
 
 from cocotb.utils import get_sim_time
 
@@ -47,6 +48,7 @@ else:
 # Column alignment
 _LEVEL_CHARS    = len("CRITICAL")  # noqa
 _RECORD_CHARS   = 35  # noqa
+_THREAD_CHARS   = 30
 _FILENAME_CHARS = 20  # noqa
 _LINENO_CHARS   = 4  # noqa
 _FUNCNAME_CHARS = 31  # noqa
@@ -73,6 +75,7 @@ class SimBaseLog(logging.getLoggerClass()):
         self.propagate = False
         logging.__init__(name)
         self.addHandler(hdlr)
+
         self.setLevel(logging.NOTSET)
 
 """ Need to play with this to get the path of the called back,
@@ -171,7 +174,8 @@ class SimLogFormatter(logging.Formatter):
         simtime = "%6.2fns" % (time_ns)
         prefix = simtime.rjust(10) + ' ' + level + ' '
         if not _suppress:
-            prefix += self.ljust(record.name, _RECORD_CHARS) + \
+            prefix += self.ljust(record.name, _RECORD_CHARS) + ' ' + \
+                      self.ljust(threading.current_thread().getName(), _THREAD_CHARS) + \
                       self.rjust(os.path.split(record.filename)[1], _FILENAME_CHARS) + \
                       ':' + self.ljust(str(record.lineno), _LINENO_CHARS) + \
                       ' in ' + self.ljust(str(record.funcName), _FUNCNAME_CHARS) + ' '

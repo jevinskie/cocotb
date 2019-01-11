@@ -342,6 +342,188 @@ class external(object):
             and standalone functions"""
         return self.__class__(self._func.__get__(obj, type))
 
+
+class RunningProcess(threading.Thread):
+
+    STATE_CREATED        = 0 # cocotb
+    STATE_STARTED        = 1 # external
+    STATE_YIELDING       = 2 # cocotb
+    STATE_YIELD_RETURNED = 3 # external
+    STATE_YIELD_RAISED   = 4 # external
+    STATE_RETURNED       = 5 # cocotb
+    STATE_RAISED         = 6 # cocotb
+
+    def __init__(self, log, func, args, kwargs):
+        super().__init__(group=None, name=func.__name__ + "_thread")
+        self.log = log
+        self._func = func
+        self._args = args
+        self._kwargs = kwargs
+        self._proc2coro = threading.Event()
+        self._coro2proc = threading.Event()
+        self._state = self.STATE_CREATED
+        self._value = None
+
+    def run(self):
+        try:
+            self.log.debug("Start of process thread")
+            try:
+                retval = self._func(*self._args, **self._kwargs)
+                self.log.debug("Handing control over to wrapper coroutine (returned %r)" % retval)
+                self._state = self.STATE_RETURNED
+                self._value = retval
+                self._proc2coro.set()
+            except Exception as e:
+                self.log.debug("Handing control over to wrapper coroutine (raised %r)" % e)
+                self._state = self.STATE_RAISED
+                self._value = e
+                self._proc2coro.set()
+        except Exception as e:
+            raise raise_error(self, str(e))
+        finally:
+            self.log.debug("End of process thread")
+
+    def process_yield(self, value):
+        """Call from the process thread to perform a yield."""
+
+        # Hand control over to the coroutine.
+        self.log.debug("Handing control over to wrapper coroutine (yield %r)" % value)
+        self._state = self.STATE_YIELDING
+        self._value = value
+        self._proc2coro.set()
+
+        # Wait for the wrapper coroutine to handle the yield.
+        self._coro2proc.wait()
+        self._coro2proc.clear()
+        self.log.debug("Received control from wrapper coroutine")
+
+        # Handle the response of the yield.
+        if self._state == self.STATE_YIELD_RETURNED:
+            self.log.debug("Yield returned %r" % self._value)
+            return self._value
+        elif self._state == self.STATE_YIELD_RAISED:
+            self.log.debug("Yield raised %r" % self._value)
+            raise self._value
+        else:
+            raise Exception("Invalid state after yield: %d" % self._state)
+
+    def coro_continue(self, value=None, throw=False):
+        """Call from the wrapper coroutine to run the process thread up to the next event."""
+
+        if self._state == self.STATE_CREATED:
+            # Start the thread.
+            self.log.debug("Handing control over to process thread (start)")
+            self._state = self.STATE_STARTED
+            self._value = None
+            self.start()
+
+        elif self._state == self.STATE_YIELDING:
+            # Resume the thread.
+            if throw:
+                self.log.debug("Handing control over to process thread (yield raised %r)" % value)
+                self._state = self.STATE_YIELD_RAISED
+            else:
+                self.log.debug("Handing control over to process thread (yield returned %r)" % value)
+                self._state = self.STATE_YIELD_RETURNED
+            self._value = value
+            self._coro2proc.set()
+
+        else:
+            raise Exception("Invalid state: %d" % self._state)
+
+        # Wait for the next event.
+        self._proc2coro.wait()
+        self._proc2coro.clear()
+        self.log.debug("Received control from process thread")
+
+        # Handle the event.
+        if self._state == self.STATE_YIELDING:
+            # The process called process_yield().
+            self.log.debug("Process yielded %r" % self._value)
+            return self._value
+
+        elif self._state == self.STATE_RETURNED:
+            # The process returned.
+            self.log.debug("Process returned %r" % self._value)
+            raise ReturnValue(self._value)
+
+        elif self._state == self.STATE_RAISED:
+            # The process raised an exception.
+            self.log.debug("Process raised %r" % self._value)
+            raise ExternalException(self._value)
+
+        else:
+            raise Exception("Invalid state after wait: %d" % self._state)
+
+
+@public
+def process_yield(value):
+    thread = threading.current_thread()
+    if thread is cocotb.scheduler._main_thread:
+        raise Exception("Calling thread is not a process. Did you mean to use the yield statement from a coroutine?")
+    elif not isinstance(thread, RunningProcess):
+        raise Exception("Calling thread is not a process. Did you mean to use a function from an external?")
+    return thread.process_yield(value)
+
+
+@public
+class process_function(object):
+    """Equivalent of the function decorator for a process.
+    """
+    def __init__(self, func):
+        self._func = func
+        self._coro = coroutine(func)
+        self._log = SimLog("cocotb.process_function.%s" % self._func.__name__, id(self))
+
+    def __call__(self, *args, **kwargs):
+        return process_yield(self._coro(*args, **kwargs))
+
+    def __get__(self, obj, type=None):
+        """Permit the decorator to be used on class methods
+            and standalone functions"""
+        return self.__class__(self._func.__get__(obj, type))
+
+
+@public
+class process(object):
+    """Decorator to apply to a function that allows it to behave like a
+    coroutine without being a generator: instead of yield statements, use
+    the process_yield() function. Behavior is similar to an external, but the
+    use case is different. Externals allow communication with the outside
+    world in a way that is NOT cycle-accurately synchronized with simulation
+    time, such as hardware co-simulation or connecting dut signals to a
+    virtual ethernet interface, whereas processes ARE synchronized. The use
+    case for a process is using an external library with callback functions,
+    where the callbacks need to do timed things.
+    """
+    def __init__(self, func):
+        self._func = func
+        self._log = SimLog("cocotb.process.%s" % self._func.__name__, id(self))
+
+    def __call__(self, *args, **kwargs):
+
+        @coroutine
+        def wrapper():
+
+            process = RunningProcess(self._log, self._func, args, kwargs)
+            while True:
+                # coro_continue raises ReturnValue or ExternalException when
+                # the process completes.
+                yield process.coro_continue()
+
+        return wrapper()
+
+    def __get__(self, obj, type=None):
+        """Permit the decorator to be used on class methods
+            and standalone functions"""
+        return self.__class__(self._func.__get__(obj, type))
+
+
+# FIXME remove me
+external = process
+function = process_function
+
+
 @public
 class hook(coroutine):
     """Decorator to mark a function as a hook for cocotb
