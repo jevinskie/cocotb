@@ -1,5 +1,6 @@
 import cocotb
 from cocotb.triggers import Timer
+from cocotb.clock import Clock
 
 import sys
 
@@ -28,6 +29,7 @@ def issue_extern(dut):
     """ Illustate an issue with a cocotb.external call that fails when calling
     a @cocotb.function multiple times """
     dut._log.info('issue_extern starting')
+    cocotb.fork(Clock(dut.clk, 5000).start())
     if excercise_dummy_module:
         dut.i = 0
         yield Timer(1)
