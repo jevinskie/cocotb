@@ -37,6 +37,7 @@
 extern "C" {
 void cocotb_init(void);
 void handle_fli_callback(void *data);
+void handle_fli_callback_restart(void *data);
 }
 
 class FliImpl;

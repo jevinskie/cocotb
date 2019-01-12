@@ -38,6 +38,18 @@ static VpiImpl *vpi_table;
 #define CASE_STR(_X) \
     case _X: return #_X
 
+__attribute__((constructor))
+void vpi_ctor(void) {
+    LOG_DEBUG("VpiImpl ctor");
+    fprintf(stderr, "VpiImpl ctor\n");
+}
+
+__attribute__((destructor))
+void vpi_dtor(void) {
+    LOG_DEBUG("VpiImpl dtor");
+    fprintf(stderr, "VpiImpl dtor\n");
+}
+
 const char *VpiImpl::reason_to_string(int reason)
 {
     switch (reason) {

@@ -38,6 +38,21 @@ using namespace std;
 
 static vector<GpiImplInterface*> registered_impls;
 
+extern "C" void mti_TraceOn(int level, const char *tag);
+
+__attribute__((constructor))
+void gpi_ctor(void) {
+    LOG_DEBUG("GpiCommon ctor");
+    fprintf(stderr, "GpiCommon ctor\n");
+    mti_TraceOn(1, "GpiCommon");
+}
+
+__attribute__((destructor))
+void gpi_dtor(void) {
+    LOG_DEBUG("GpiCommon dtor");
+    fprintf(stderr, "GpiCommon dtor\n");
+}
+
 #ifdef SINGLETON_HANDLES
 
 class GpiHandleStore {
@@ -105,6 +120,24 @@ int gpi_register_impl(GpiImplInterface *func_tbl)
             return -1;
         }
     }
+    registered_impls.push_back(func_tbl);
+    return 0;
+}
+
+int gpi_deregister_impl(GpiImplInterface *func_tbl)
+{
+    vector<GpiImplInterface*>::iterator iter;
+    for (iter = registered_impls.begin();
+         iter != registered_impls.end();
+         iter++)
+    {
+        if ((*iter)->get_name_s() == func_tbl->get_name_s()) {
+            registered_impls.erase(iter);
+            return 0;
+        }
+    }
+    LOG_WARN("%s not already registered, Check GPI_EXTRA", func_tbl->get_name_c());
+    return -1;
     registered_impls.push_back(func_tbl);
     return 0;
 }

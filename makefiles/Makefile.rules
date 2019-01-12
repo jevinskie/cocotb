@@ -49,10 +49,10 @@ GCC_ARGS+= -D$(SIM_DEFINE)
 GXX_ARGS+= -D$(SIM_DEFINE)
 
 $(LIB_OBJ_DIR)/%.o: %.c
-	gcc $(GCC_ARGS) -c $(INCLUDES) -o $@ $<
+	gcc $(GCC_ARGS) -c $(INCLUDES) -O0 -ggdb3 -o $@ $<
 
 $(LIB_OBJ_DIR)/%.o: %.cpp
-	g++ $(GXX_ARGS) -c $(INCLUDES) -o $@ $<
+	g++ $(GXX_ARGS) -c $(INCLUDES) -O0 -ggdb3 -o $@ $<
 
 $(LIB_DIR)/$(LIB_NAME).$(LIB_EXT): $($(LIB_NAME)_OBJS)
-	gcc $(GCC_ARGS) $(SO_LINKER_ARGS) -o $@ $($(LIB_NAME)_OBJS) $(ARS) $(LIBS) $(LD_PATH)
+	gcc $(GCC_ARGS) $(SO_LINKER_ARGS) -O0 -ggdb3 -o $@ $($(LIB_NAME)_OBJS) $(ARS) $(LIBS) $(LD_PATH)

@@ -40,11 +40,25 @@ static FliProcessCbHdl *sim_finish_cb;
 static FliImpl         *fli_table;
 }
 
+__attribute__((constructor))
+void fli_ctor(void) {
+    LOG_DEBUG("FliImpl ctor");
+    fprintf(stderr, "FliImpl ctor\n");
+}
+
+__attribute__((destructor))
+void fli_dtor(void) {
+    LOG_DEBUG("FliImpl dtor");
+    fprintf(stderr, "FliImpl dtor\n");
+}
+
 void FliImpl::sim_end(void)
 {
+    LOG_DEBUG("FliImpl::sim_end")
     if (GPI_DELETE != sim_finish_cb->get_call_state()) {
         sim_finish_cb->set_call_state(GPI_DELETE);
         if (mti_NowUpper() == 0 && mti_Now() == 0 && mti_Delta() == 0) {
+            LOG_DEBUG("FliImpl::sim_end calling mti_Quit")
             mti_Quit();
         } else {
             mti_Break();
@@ -1006,6 +1020,21 @@ void handle_fli_callback(void *data)
         /* Issue #188 seems to appear via FLI as well */
         cb_hdl->cleanup_callback();
     }
+};
+
+void handle_fli_callback_restart(void *data)
+{
+    fflush(stderr);
+
+    LOG_DEBUG("FLI: callback restart");
+
+    FliProcessCbHdl *cb_hdl = (FliProcessCbHdl*)data;
+
+    if (!cb_hdl) {
+        LOG_DEBUG("FLI: Callback data corrupted: ABORTING");
+    }
+
+    gpi_deregister_impl(fli_table);
 };
 
 static void register_initial_callback(void)

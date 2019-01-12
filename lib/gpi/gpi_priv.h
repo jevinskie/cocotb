@@ -335,6 +335,7 @@ private:
 
 /* Called from implementation layers back up the stack */
 int gpi_register_impl(GpiImplInterface *func_tbl);
+int gpi_deregister_impl(GpiImplInterface *func_tbl);
 
 void gpi_embed_init(gpi_sim_info_t *info);
 void gpi_embed_end(void);

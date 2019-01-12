@@ -178,8 +178,14 @@ int FliStartupCbHdl::run_callback(void)
     return 0;
 }
 
+void fli_restart_cb(void *param) {
+    LOG_DEBUG("fli_restart_cb");
+    fprintf(stderr, "fli_restart_cb\n");
+}
+
 int FliShutdownCbHdl::arm_callback(void)
 {
+    mti_AddRestartCB(handle_fli_callback_restart, (void*)this);
     mti_AddQuitCB(handle_fli_callback,(void *)this);
     set_call_state(GPI_PRIMED);
 
