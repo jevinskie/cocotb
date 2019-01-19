@@ -40,6 +40,16 @@ static FliProcessCbHdl *sim_finish_cb;
 static FliImpl         *fli_table;
 }
 
+__attribute__((constructor))
+void ctor(void) {
+    fprintf(stderr, "fli ctor\n");
+}
+
+__attribute__((destructor))
+void dtor(void) {
+    fprintf(stderr, "fli dtor\n");
+}
+
 void FliImpl::sim_end(void)
 {
     if (GPI_DELETE != sim_finish_cb->get_call_state()) {

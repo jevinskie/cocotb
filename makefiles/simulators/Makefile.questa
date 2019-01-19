@@ -113,7 +113,7 @@ ifeq ($(GUI),1)
 else
 	@echo "onbreak resume" >> $@
 	@echo "run -all" >> $@
-	@echo "quit" >> $@
+	#@echo "quit" >> $@
 endif
 
 ifeq ($(OS),Msys)
