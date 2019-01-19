@@ -36,6 +36,16 @@ static PyObject *pLogHandler;
 static PyObject *pLogFilter;
 static enum gpi_log_levels local_level = GPIInfo;
 
+__attribute__((constructor))
+void gpi_logging_ctor(void) {
+    fprintf(stderr, "gpi_logging ctor\n");
+}
+
+__attribute__((destructor))
+void gpi_logging_dtor(void) {
+    fprintf(stderr, "gpi_logging dtor\n");
+}
+
 void set_log_handler(void *handler)
 {
     pLogHandler = (PyObject *)handler;
@@ -122,15 +132,15 @@ void gpi_log(const char *name, long level, const char *pathname, const char *fun
                fprintf(stderr, "Log message construction failed\n");
             }
  
-            fprintf(stdout, "     -.--ns ");
-            fprintf(stdout, "%-9s", log_level(level));
-            fprintf(stdout, "%-35s", name);
-            fprintf(stdout, "%20s:", pathname);
-            fprintf(stdout, "%-4ld", lineno);
-            fprintf(stdout, " in %-31s ", funcname);
-            fprintf(stdout, "%s", log_buff);
-            fprintf(stdout, "\n");
-            fflush(stdout);
+            fprintf(stderr, "     -.--ns ");
+            fprintf(stderr, "%-9s", log_level(level));
+            fprintf(stderr, "%-35s", name);
+            fprintf(stderr, "%20s:", pathname);
+            fprintf(stderr, "%-4ld", lineno);
+            fprintf(stderr, " in %-31s ", funcname);
+            fprintf(stderr, "%s", log_buff);
+            fprintf(stderr, "\n");
+            fflush(stderr);
         }
         return;
     }

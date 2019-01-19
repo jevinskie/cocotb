@@ -341,6 +341,7 @@ void gpi_embed_init(gpi_sim_info_t *info);
 void gpi_embed_end(void);
 void gpi_embed_event(gpi_event_t level, const char *msg);
 void gpi_load_extra_libs(void);
+void gpi_unload_extra_libs(void);
 
 typedef const void (*layer_entry_func)(void);
 

@@ -188,6 +188,9 @@ def _sim_event(level, message):
         # so no cleanup is needed
         msg = ("Failing test at simulator request before test run completion: "
                "%s" % message)
+        print("stderr Failing test at simulator request before test run completion: "
+               "%s" % message, file=sys.stderr)
+        sys.stderr.flush();
         scheduler.log.error(msg)
         scheduler.finish_scheduler(SimFailure(msg))
     else:

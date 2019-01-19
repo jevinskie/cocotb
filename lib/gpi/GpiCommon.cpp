@@ -229,6 +229,12 @@ void gpi_load_extra_libs(void)
     gpi_print_registered_impl();
 }
 
+void gpi_unload_extra_libs(void) {
+    FENTER;
+    embed_deinit_python();
+    FEXIT;
+}
+
 void gpi_get_sim_time(uint32_t *high, uint32_t *low)
 {
     registered_impls[0]->get_sim_time(high, low);

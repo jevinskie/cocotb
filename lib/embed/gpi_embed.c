@@ -35,6 +35,16 @@
 #include "../compat/python3_compat.h"
 #include "locale.h"
 
+__attribute__((constructor))
+void libcocotb_ctor(void) {
+    fprintf(stderr, "libcocotb ctor\n");
+}
+
+__attribute__((destructor))
+void libcocotb_dtor(void) {
+    fprintf(stderr, "libcocotb dtor\n");
+}
+
 #if defined(_WIN32)
 #include <windows.h>
 #define sleep(n) Sleep(1000 * n)
@@ -138,6 +148,12 @@ void embed_init_python(void)
         sleep(sleep_time);
     }
 out:
+    FEXIT;
+}
+
+void embed_deinit_python(void) {
+    FENTER;
+    Py_Finalize();
     FEXIT;
 }
 

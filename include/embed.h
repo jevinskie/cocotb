@@ -39,6 +39,7 @@ extern "C" {
 #endif
 
 extern void embed_init_python(void);
+extern void embed_deinit_python(void);
 extern int embed_sim_init(gpi_sim_info_t *info);
 extern void embed_sim_event(gpi_event_t level, const char *msg);
 

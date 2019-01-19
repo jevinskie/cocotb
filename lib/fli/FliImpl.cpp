@@ -1024,6 +1024,10 @@ void handle_fli_callback(void *data)
 
 void handle_fli_callback_restart(void *data)
 {
+    FENTER;
+    fflush(stderr);
+
+    fprintf(stderr, "handle_fli_callback_restart enter\n");
     fflush(stderr);
 
     LOG_DEBUG("FLI: callback restart");
@@ -1035,6 +1039,8 @@ void handle_fli_callback_restart(void *data)
     }
 
     gpi_deregister_impl(fli_table);
+    gpi_unload_extra_libs();
+    FEXIT;
 };
 
 static void register_initial_callback(void)

@@ -39,9 +39,20 @@
 // Tracks if we are in the context of Python or Simulator
 int context = 0;
 
+__attribute__((constructor))
+void cocotb_utils_ctor(void) {
+    fprintf(stderr, "cocotb_utils ctor\n");
+}
+
+__attribute__((destructor))
+void cocotb_utils_dtor(void) {
+    fprintf(stderr, "cocotb_utils dtor\n");
+}
+
 void* utils_dyn_open(const char* lib_name)
 {
     void *ret = NULL;
+    fprintf(stderr, "%s: open: %s\n", __func__, lib_name);
 #if ! defined(__linux__) && ! defined(__APPLE__)
     SetErrorMode(0);
     ret = LoadLibrary(lib_name);

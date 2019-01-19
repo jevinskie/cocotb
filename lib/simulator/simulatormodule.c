@@ -40,6 +40,16 @@ static int releases = 0;
 #include "simulatormodule.h"
 #include <cocotb_utils.h>
 
+__attribute__((constructor))
+void libsim_ctor(void) {
+    fprintf(stderr, "libsim ctor\n");
+}
+
+__attribute__((destructor))
+void libsim_dtor(void) {
+    fprintf(stderr, "libsim dtor\n");
+}
+
 typedef int (*gpi_function_t)(const void *);
 
 PyGILState_STATE TAKE_GIL(void)
