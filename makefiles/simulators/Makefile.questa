@@ -112,7 +112,7 @@ ifeq ($(GUI),1)
 	@echo "add log -r *" >> $@
 else
 	@echo "onbreak resume" >> $@
-	@echo "run -all" >> $@
+	#@echo "run -all" >> $@
 	#@echo "quit" >> $@
 endif
 
