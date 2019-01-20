@@ -13,6 +13,7 @@ typedef void (*pyinit_t)(void);
 typedef int (*pyfin_t)(void);
 pyinit_t pyinit;
 pyfin_t pyfin;
+void *self_handle;
 
 void cocotb_init(void)
 {
@@ -24,6 +25,7 @@ void ctor(void) {
 	int ret;
     fprintf(stderr, "fli stub ctor %p\n", cocotb_init);
     py_handle = dlopen("/home/jevin/base/python/3.7.2-32/lib/libpython3.7m.so",  RTLD_LAZY | RTLD_GLOBAL);
+    fprintf(stderr, "py_handle = %p\n", py_handle);
     assert(py_handle);
     // pyinit = dlsym(py_handle, "Py_Initialize");
     // assert(pyinit);
@@ -35,6 +37,8 @@ void ctor(void) {
     					"import sys\n"
                        "print('Today is', ctime(time()), file=sys.stderr, flush=True)\n");
     fprintf(stderr, "simplestring() = %d\n", ret);
+    // self_handle = dlopen("/home/jevin/code/hdl/cocotb/git/cocotb/build/libs/i686/libfli.so", RTLD_LAZY | RTLD_GLOBAL);
+    fprintf(stderr, "self_handle: %p\n", self_handle);
     fprintf(stderr, "fli stub ctor done\n");
 }
 
@@ -45,7 +49,8 @@ void dtor(void) {
     // ret = pyfin();
     ret = Py_FinalizeEx();
     fprintf(stderr, "Py_FinalizeEx() = %d\n", ret);
-    ret = dlclose(py_handle);
+    // ret = dlclose(py_handle);
+    ret = 243;
     fprintf(stderr, "dlclose(py_handle) = %d\n", ret);
     fprintf(stderr, "fli stub dtor done\n");
 }
