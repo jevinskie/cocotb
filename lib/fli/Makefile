@@ -30,11 +30,14 @@ include $(SIM_ROOT)/makefiles/Makefile.inc
 
 INCLUDES    += -I$(MODELSIM_BIN_DIR)/../include
 GXX_ARGS    += -DFLI_CHECKING -DUSE_CACHE
-LIBS        := $(EXTRA_LIBS) -lgpilog -lgpi -lstdc++
-LD_PATH     := -L$(LIB_DIR) $(EXTRA_LIBDIRS)
+# LIBS        := $(EXTRA_LIBS) -lgpilog -lgpi -lstdc++
+LIBS        := 
+# LD_PATH     := -L$(LIB_DIR) $(EXTRA_LIBDIRS)
+LD_PATH     := -L /home/jevin/base/python/3.7.2-32/lib -lpython3.7m
 LIB_NAME    := libfli
 
-SRCS        := FliImpl.cpp FliCbHdl.cpp FliObjHdl.cpp
+# SRCS        := FliImpl.cpp FliCbHdl.cpp FliObjHdl.cpp
+SRCS        := fli_stub.c
 
 all: $(LIB_DIR)/$(LIB_NAME).$(LIB_EXT)
 
