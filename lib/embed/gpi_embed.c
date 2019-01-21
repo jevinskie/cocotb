@@ -77,10 +77,12 @@ void embed_init_python(void)
     if (gtstate)
         return;
 
+    /*
     void * ret = utils_dyn_open(PY_SO_LIB);
     if (!ret) {
         fprintf(stderr, "Failed to find python lib\n");
     }
+    */
 
     to_python();
 
@@ -141,6 +143,14 @@ out:
     FEXIT;
 }
 
+void handle_restart(void *data) {
+    int ret;
+    fprintf(stderr, "%s begin\n", __func__);
+    to_python();
+    ret = Py_FinalizeEx();
+    fprintf(stderr, "%s Py_FinalizeEx() = %d\n", __func__, ret);
+    fprintf(stderr, "%s end\n", __func__);
+}
 
 
 /**
