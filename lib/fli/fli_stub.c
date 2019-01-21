@@ -14,6 +14,7 @@ typedef int (*pyfin_t)(void);
 pyinit_t pyinit;
 pyfin_t pyfin;
 void *self_handle;
+void *pyinitp = Py_Initialize;
 
 void cocotb_init(void)
 {
@@ -32,21 +33,25 @@ void ctor(void) {
     // pyfin = dlsym(py_handle, "Py_FinalizeEx");
     // assert(pyfin);
     // pyinit();
+    fprintf(stderr, "pyinitp: %p\n", pyinitp);
     Py_Initialize();
-    ret = PyRun_SimpleString("from time import time,ctime\n"
-    					"import sys\n"
-                        "import math\n"
-                        "import ctypes\n"
-                        "import xml.parsers.expat\n"
-                        "import xml.etree.ElementTree\n"
-                        "import heapq\n"
-                        "import hashlib\n"
-                        "import os\n"
-                        "import random\n"
-                        "import mmap\n"
-                        "import _opcode\n"
-                        "print(os.getpid())\n"
-                       "print('Today is', ctime(time()), file=sys.stderr, flush=True)\n");
+    // ret = PyRun_SimpleString("from time import time,ctime\n"
+    //                     "import sys\n"
+    //                     "import math\n"
+    //                     "import ctypes\n"
+    //                     "import xml.parsers.expat\n"
+    //                     "import xml.etree.ElementTree\n"
+    //                     "import heapq\n"
+    //                     "import hashlib\n"
+    //                     "import os\n"
+    //                     "import random\n"
+    //                     "import mmap\n"
+    //                     "import _opcode\n"
+    //                     "print(os.getpid())\n"
+    //                    "print('Today is', ctime(time()), file=sys.stderr, flush=True)\n");
+    ret = PyRun_SimpleString(
+                    "import sys\n"
+                    "print('hello from python', file=sys.stderr, flush=True)\n");
     fprintf(stderr, "simplestring() = %d\n", ret);
     // self_handle = dlopen("/home/jevin/code/hdl/cocotb/git/cocotb/build/libs/i686/libfli.so", RTLD_LAZY | RTLD_GLOBAL);
     fprintf(stderr, "self_handle: %p\n", self_handle);
