@@ -48,11 +48,17 @@ endif
 GCC_ARGS+= -D$(SIM_DEFINE)
 GXX_ARGS+= -D$(SIM_DEFINE)
 
+CC := gcc
+CXX := g++
+
+#CC := clang -save-temps -L /usr/lib/gcc/x86_64-linux-gnu/8/32
+#CXX := clang++ -save-temps -I /usr/include/x86_64-linux-gnu/c++/8/32 -L /usr/lib/gcc/x86_64-linux-gnu/8/32
+
 $(LIB_OBJ_DIR)/%.o: %.c
-	gcc $(GCC_ARGS) -c $(INCLUDES) -o $@ $<
+	$(CC) $(GCC_ARGS) -c $(INCLUDES) -o $@ $<
 
 $(LIB_OBJ_DIR)/%.o: %.cpp
-	g++ $(GXX_ARGS) -c $(INCLUDES) -o $@ $<
+	$(CXX) $(GXX_ARGS) -c $(INCLUDES) -o $@ $<
 
 $(LIB_DIR)/$(LIB_NAME).$(LIB_EXT): $($(LIB_NAME)_OBJS)
-	gcc $(GCC_ARGS) $(SO_LINKER_ARGS) -o $@ $($(LIB_NAME)_OBJS) $(ARS) $(LIBS) $(LD_PATH)
+	$(CC) $(GCC_ARGS) $(SO_LINKER_ARGS) -o $@ $($(LIB_NAME)_OBJS) $(ARS) $(LIBS) $(LD_PATH)
