@@ -24,9 +24,9 @@ __attribute__((constructor))
 void ctor(void) {
 	int ret;
     fprintf(stderr, "fli stub ctor %p\n", cocotb_init);
-    py_handle = dlopen("/home/jevin/base/python/3.7.2-32/lib/libpython3.7m.so",  RTLD_LAZY | RTLD_GLOBAL);
-    fprintf(stderr, "py_handle = %p\n", py_handle);
-    assert(py_handle);
+    // py_handle = dlopen("/home/jevin/base/python/3.7.2-32/lib/libpython3.7m.so",  RTLD_LAZY | RTLD_GLOBAL);
+    // fprintf(stderr, "py_handle = %p\n", py_handle);
+    // assert(py_handle);
     // pyinit = dlsym(py_handle, "Py_Initialize");
     // assert(pyinit);
     // pyfin = dlsym(py_handle, "Py_FinalizeEx");
