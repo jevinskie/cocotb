@@ -18,9 +18,20 @@ pyfin_t pyfin;
 void *self_handle;
 void *pyinitp = (void*)Py_Initialize;
 
+extern "C"
+void handle_restart(void *data) {
+    fprintf(stderr, "%s\n", __func__);
+}
+
+typedef void (*restartcb_t)(void*);
+
+void mti_AddRestartCB(restartcb_t cb, void *data);
+
 void cocotb_init(void)
 {
     fprintf(stderr, "cocotb_init called\n");
+    mti_AddRestartCB(handle_restart, NULL);
+    fprintf(stderr, "cocotb_init done\n");
 }
 
 extern "C" void gpi_hello(void);
@@ -39,23 +50,26 @@ void fli_ctor(void) {
     // pyinit();
     fprintf(stderr, "pyinitp: %p\n", pyinitp);
     Py_Initialize();
-    // ret = PyRun_SimpleString("from time import time,ctime\n"
-    //                     "import sys\n"
-    //                     "import math\n"
-    //                     "import ctypes\n"
-    //                     "import xml.parsers.expat\n"
-    //                     "import xml.etree.ElementTree\n"
-    //                     "import heapq\n"
-    //                     "import hashlib\n"
-    //                     "import os\n"
-    //                     "import random\n"
-    //                     "import mmap\n"
-    //                     "import _opcode\n"
-    //                     "print(os.getpid())\n"
-    //                    "print('Today is', ctime(time()), file=sys.stderr, flush=True)\n");
+#if 1
+    ret = PyRun_SimpleString("from time import time,ctime\n"
+                        "import sys\n"
+                        "import math\n"
+                        "import ctypes\n"
+                        "import xml.parsers.expat\n"
+                        "import xml.etree.ElementTree\n"
+                        "import heapq\n"
+                        "import hashlib\n"
+                        "import os\n"
+                        "import random\n"
+                        "import mmap\n"
+                        "import _opcode\n"
+                        "print(os.getpid())\n"
+                       "print('Today is', ctime(time()), file=sys.stderr, flush=True)\n");
+#else
     ret = PyRun_SimpleString(
                     "import sys\n"
                     "print('hello from python', file=sys.stderr, flush=True)\n");
+#endif
     fprintf(stderr, "simplestring() = %d\n", ret);
     // self_handle = dlopen("/home/jevin/code/hdl/cocotb/git/cocotb/build/libs/i686/libfli.so", RTLD_LAZY | RTLD_GLOBAL);
     fprintf(stderr, "self_handle: %p\n", self_handle);
