@@ -51,8 +51,8 @@ GXX_ARGS+= -D$(SIM_DEFINE)
 CC := gcc
 CXX := g++
 
-#CC := clang -save-temps -L /usr/lib/gcc/x86_64-linux-gnu/8/32
-#CXX := clang++ -save-temps -I /usr/include/x86_64-linux-gnu/c++/8/32 -L /usr/lib/gcc/x86_64-linux-gnu/8/32
+CC := clang -save-temps -L /usr/lib/gcc/x86_64-linux-gnu/8/32
+CXX := clang++ -save-temps -I /usr/include/x86_64-linux-gnu/c++/8/32 -L /usr/lib/gcc/x86_64-linux-gnu/8/32
 
 $(LIB_OBJ_DIR)/%.o: %.c
 	$(CC) $(GCC_ARGS) -c $(INCLUDES) -o $@ $<

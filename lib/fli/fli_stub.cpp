@@ -8,6 +8,8 @@
 
 #include <Python.h>
 
+#include "fli_stub.h"
+
 void *py_handle;
 typedef void (*pyinit_t)(void);
 typedef int (*pyfin_t)(void);
@@ -16,7 +18,6 @@ pyfin_t pyfin;
 void *self_handle;
 void *pyinitp = (void*)Py_Initialize;
 
-extern "C"
 void cocotb_init(void)
 {
     fprintf(stderr, "cocotb_init called\n");
@@ -59,6 +60,16 @@ void fli_ctor(void) {
     // self_handle = dlopen("/home/jevin/code/hdl/cocotb/git/cocotb/build/libs/i686/libfli.so", RTLD_LAZY | RTLD_GLOBAL);
     fprintf(stderr, "self_handle: %p\n", self_handle);
     gpi_hello();
+    GpiAnimal gpi_animal;
+    gpi_animal.say_noise();
+    gpi_animal.say_hello();
+    gpi_animal.say_doze();
+    fprintf(stderr, "gpi_animal thing: %s\n", gpi_animal.get_definition_name());
+    FliAnimal fli_animal;
+    fli_animal.say_noise();
+    fli_animal.say_hello();
+    fli_animal.say_doze();
+    fprintf(stderr, "fli_animal thing: %s\n", fli_animal.get_definition_name());
     fprintf(stderr, "fli stub ctor done\n");
 }
 
@@ -74,4 +85,8 @@ void fli_dtor(void) {
     ret = 243;
     fprintf(stderr, "dlclose(py_handle) = %d\n", ret);
     fprintf(stderr, "fli stub dtor done\n");
+}
+
+void FliAnimal::say_noise() {
+    fprintf(stderr, "say_noise fli woof\n");
 }
