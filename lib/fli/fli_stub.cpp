@@ -14,15 +14,18 @@ typedef int (*pyfin_t)(void);
 pyinit_t pyinit;
 pyfin_t pyfin;
 void *self_handle;
-void *pyinitp = Py_Initialize;
+void *pyinitp = (void*)Py_Initialize;
 
+extern "C"
 void cocotb_init(void)
 {
     fprintf(stderr, "cocotb_init called\n");
 }
 
+extern "C" void gpi_hello(void);
+
 __attribute__((constructor))
-void ctor(void) {
+void fli_ctor(void) {
 	int ret;
     fprintf(stderr, "fli stub ctor %p\n", cocotb_init);
     // py_handle = dlopen("/home/jevin/base/python/3.7.2-32/lib/libpython3.7m.so",  RTLD_LAZY | RTLD_GLOBAL);
@@ -55,11 +58,12 @@ void ctor(void) {
     fprintf(stderr, "simplestring() = %d\n", ret);
     // self_handle = dlopen("/home/jevin/code/hdl/cocotb/git/cocotb/build/libs/i686/libfli.so", RTLD_LAZY | RTLD_GLOBAL);
     fprintf(stderr, "self_handle: %p\n", self_handle);
+    gpi_hello();
     fprintf(stderr, "fli stub ctor done\n");
 }
 
 __attribute__((destructor))
-void dtor(void) {
+void fli_dtor(void) {
 	int ret;
     fprintf(stderr, "fli stub dtor\n");
     // ret = pyfin();

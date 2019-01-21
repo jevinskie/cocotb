@@ -31,11 +31,13 @@ include $(SIM_ROOT)/makefiles/Makefile.inc
 
 INCLUDES    +=
 GXX_ARGS    += -DVPI_CHECKING -DLIB_EXT=$(LIB_EXT) -DSINGLETON_HANDLES
-LIBS        := -lcocotbutils -lgpilog -lcocotb -lstdc++
+# LIBS        := -lcocotbutils -lgpilog -lcocotb -lstdc++
+LIBS        := -lstdc++
 LD_PATH     := -L$(LIB_DIR)
 LIB_NAME    := libgpi
 
-SRCS        := GpiCbHdl.cpp GpiCommon.cpp
+#SRCS        := GpiCbHdl.cpp GpiCommon.cpp
+SRCS        := gpi_stub.cpp
 
 all: $(LIB_DIR)/$(LIB_NAME).$(LIB_EXT)
 
