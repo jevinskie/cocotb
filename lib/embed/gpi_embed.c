@@ -147,7 +147,8 @@ void handle_restart(void *data) {
     int ret;
     fprintf(stderr, "%s begin\n", __func__);
     to_python();
-    ret = Py_FinalizeEx();
+    // ret = Py_FinalizeEx();
+    ret = 242;
     fprintf(stderr, "%s Py_FinalizeEx() = %d\n", __func__, ret);
     fprintf(stderr, "%s end\n", __func__);
 }
