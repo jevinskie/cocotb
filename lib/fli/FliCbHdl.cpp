@@ -192,7 +192,7 @@ void mti_AddRestartCB(restartcb_t cb, void *data);
 
 int FliShutdownCbHdl::arm_callback(void)
 {
-    mti_AddRestartCB(handle_restart,(void *)this);
+    // mti_AddRestartCB(handle_restart,(void *)this);
     // mti_AddRestartCB(handle_fli_callback,(void *)this);
     mti_AddQuitCB(handle_fli_callback,(void *)this);
     set_call_state(GPI_PRIMED);

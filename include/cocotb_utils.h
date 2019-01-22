@@ -45,6 +45,10 @@ extern void* utils_dyn_sym(void *handle, const char* sym_name);
 
 extern int context;
 
+void to_python(void);
+void to_simulator(void);
+
+#if 0
 void to_python(void) {
     if (context) {
         fprintf(stderr, "FATAL: We are calling up again\n");
@@ -63,6 +67,7 @@ void to_simulator(void) {
     --context;
     //fprintf(stderr, "INFO: Returning back to simulator %d\n", context);
 }
+#endif
 
 #ifdef __cplusplus
 }

@@ -61,6 +61,7 @@ export LIB_OBJ_DIR:= $(BUILD_DIR)/obj/$(ARCH)
 export INCLUDES := -I$(SIM_ROOT)/include -I$(PYTHON_INCLUDEDIR)
 
 LIB_EXT     := so
+AR_EXT		:= a
 PY_EXT	    := so
 
 # Base GCC flags

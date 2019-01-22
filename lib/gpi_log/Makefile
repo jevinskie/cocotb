@@ -36,7 +36,8 @@ SRCS        := gpi_logging.c
 
 LIB_NAME    := libgpilog
 
-all: $(LIB_DIR)/$(LIB_NAME).$(LIB_EXT)
+# all: $(LIB_DIR)/$(LIB_NAME).$(LIB_EXT)
+all: $(LIB_DIR)/$(LIB_NAME).$(AR_EXT)
 
 clean:
 	-@rm -rf $(LIB_DIR)/$(LIB_NAME).$(LIB_EXT)
