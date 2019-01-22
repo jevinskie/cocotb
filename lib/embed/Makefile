@@ -37,8 +37,8 @@ SRCS		:= gpi_embed.c
 
 LIB_NAME	:= libcocotb
 
-all: $(LIB_DIR)/$(LIB_NAME).$(LIB_EXT)
-# all: $(LIB_DIR)/$(LIB_NAME).$(AR_EXT)
+# all: $(LIB_DIR)/$(LIB_NAME).$(LIB_EXT)
+all: $(LIB_DIR)/$(LIB_NAME).$(AR_EXT)
 
 clean:
 	-@rm -rf $(OBJ_DIR)

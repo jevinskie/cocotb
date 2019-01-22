@@ -81,11 +81,11 @@ GCC_ARGS	:= $(GXX_ARGS)
 LIB_EXT		:= dll
 PY_EXT		:= pyd
 else ifeq ($(OS),Linux)
-#GXX_ARGS	+= -Werror -Wcast-qual -Wcast-align -Wwrite-strings \
+#GXX_ARGS	+= -Werror -Wcast-qual -Wcast-align -Wwrite-strings \\
 GXX_ARGS	+= -Wcast-qual -Wcast-align -Wwrite-strings \
 			-Wall -Wno-unused-parameter \
-			-fno-common -g -DDEBUG -fpic
-GCC_ARGS	= $(GXX_ARGS) -Wstrict-prototypes -Waggregate-return
+			-fno-common -g -DDEBUG -fpic -fno-gnu-unique
+GCC_ARGS	+= $(GXX_ARGS) -Wstrict-prototypes -Waggregate-return
 else
 $(error "Unsupported os " $(OS))
 endif
@@ -93,7 +93,7 @@ endif
 ifeq ($(OS),Darwin)
 SO_LINKER_ARGS := -shared -undefined suppress -flat_namespace -L$(PYTHON_LIBDIR)
 else ifeq ($(OS),Linux)
-SO_LINKER_ARGS := -shared -Xlinker -L$(PYTHON_LIBDIR)
+SO_LINKER_ARGS := -shared -Xlinker -L$(PYTHON_LIBDIR) -fno-gnu-unique
 else ifeq ($(OS),Msys)
 SO_LINKER_ARGS :=  -shared -Wl,-no-undefined -Wl,-enable-runtime-pseudo-reloc-v2 \
 			-Wl,--enable-auto-import -L$(PYTHON_LIBDIR)

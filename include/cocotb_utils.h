@@ -43,7 +43,7 @@ extern "C" {
 extern void* utils_dyn_open(const char* lib_name);
 extern void* utils_dyn_sym(void *handle, const char* sym_name);
 
-extern int context;
+extern int cocotb_context;
 
 void to_python(void);
 void to_simulator(void);

@@ -37,7 +37,7 @@
 #endif
 
 // Tracks if we are in the context of Python or Simulator
-int context = 0;
+int cocotb_context = 0;
 
 void* utils_dyn_open(const char* lib_name)
 {
@@ -79,21 +79,21 @@ void* utils_dyn_sym(void *handle, const char* sym_name)
 
 #if 1
 void to_python(void) {
-    if (context) {
+    if (cocotb_context) {
         fprintf(stderr, "FATAL: We are calling up again\n");
         exit(1);
     }
-    ++context;
-    //fprintf(stderr, "INFO: Calling up to python %d\n", context);
+    ++cocotb_context;
+    fprintf(stderr, "INFO: Calling up to python %d\n", cocotb_context);
 }
 
 void to_simulator(void) {
-    if (!context) {
+    if (!cocotb_context) {
         fprintf(stderr, "FATAL: We have returned twice from python\n");
         exit(1);
     }
 
-    --context;
-    //fprintf(stderr, "INFO: Returning back to simulator %d\n", context);
+    --cocotb_context;
+    fprintf(stderr, "INFO: Returning back to simulator %d\n", cocotb_context);
 }
 #endif
