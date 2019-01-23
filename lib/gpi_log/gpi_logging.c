@@ -112,8 +112,8 @@ void gpi_log(const char *name, long level, const char *pathname, const char *fun
     va_list ap;
     int n;
 
-    if (!pLogHandler || 1) {
-        if (level >= GPIInfo || 1) {
+    if (!pLogHandler) {
+        if (level >= GPIInfo) {
             va_start(ap, msg);
             n = vsnprintf(log_buff, LOG_SIZE, msg, ap);
             va_end(ap);

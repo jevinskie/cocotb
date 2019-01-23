@@ -75,7 +75,9 @@ if "SPHINX_BUILD" not in os.environ:
     # appear. Continue silently if this fails.
     try:
         if not sys.stdout.isatty():
+            print('before stdin open', file=sys.stderr, flush=True)
             sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 1)
+            print('after stdin open', file=sys.stderr, flush=True)
             log.debug("Reopened stdout with line buffering")
         if not sys.stderr.isatty():
             sys.stderr = os.fdopen(sys.stderr.fileno(), 'w', 1)
