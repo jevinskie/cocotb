@@ -39,6 +39,8 @@ static int releases = 0;
 
 #include "simulatormodule.h"
 #include <cocotb_utils.h>
+#include <dlfcn.h>
+#include <assert.h>
 
 typedef int (*gpi_function_t)(const void *);
 
@@ -61,6 +63,150 @@ struct sim_time {
 };
 
 static struct sim_time cache_time;
+
+static int *cocotb_context_p;
+static typeof(to_python) *to_python_p;
+static typeof(to_simulator) *to_simulator_p;
+static typeof(set_log_level) *set_log_level_p;
+static typeof(gpi_deregister_callback) *gpi_deregister_callback_p;
+static typeof(gpi_get_definition_file) *gpi_get_definition_file_p;
+static typeof(gpi_get_definition_name) *gpi_get_definition_name_p;
+static typeof(gpi_get_handle_by_index) *gpi_get_handle_by_index_p;
+static typeof(gpi_get_handle_by_name) *gpi_get_handle_by_name_p;
+static typeof(gpi_get_num_elems) *gpi_get_num_elems_p;
+static typeof(gpi_get_object_type) *gpi_get_object_type_p;
+static typeof(gpi_get_range_left) *gpi_get_range_left_p;
+static typeof(gpi_get_range_right) *gpi_get_range_right_p;
+static typeof(gpi_get_root_handle) *gpi_get_root_handle_p;
+static typeof(gpi_get_signal_name_str) *gpi_get_signal_name_str_p;
+static typeof(gpi_get_signal_type_str) *gpi_get_signal_type_str_p;
+static typeof(gpi_get_signal_value_binstr) *gpi_get_signal_value_binstr_p;
+static typeof(gpi_get_signal_value_long) *gpi_get_signal_value_long_p;
+static typeof(gpi_get_signal_value_real) *gpi_get_signal_value_real_p;
+static typeof(gpi_get_signal_value_str) *gpi_get_signal_value_str_p;
+static typeof(gpi_get_sim_precision) *gpi_get_sim_precision_p;
+static typeof(gpi_get_sim_time) *gpi_get_sim_time_p;
+static typeof(gpi_is_constant) *gpi_is_constant_p;
+static typeof(gpi_is_indexable) *gpi_is_indexable_p;
+static typeof(gpi_iterate) *gpi_iterate_p;
+static typeof(gpi_log) *gpi_log_p;
+static typeof(gpi_next) *gpi_next_p;
+static typeof(gpi_register_nexttime_callback) *gpi_register_nexttime_callback_p;
+static typeof(gpi_register_readonly_callback) *gpi_register_readonly_callback_p;
+static typeof(gpi_register_readwrite_callback) *gpi_register_readwrite_callback_p;
+static typeof(gpi_register_timed_callback) *gpi_register_timed_callback_p;
+static typeof(gpi_register_value_change_callback) *gpi_register_value_change_callback_p;
+static typeof(gpi_set_signal_value_long) *gpi_set_signal_value_long_p;
+static typeof(gpi_set_signal_value_real) *gpi_set_signal_value_real_p;
+static typeof(gpi_set_signal_value_str) *gpi_set_signal_value_str_p;
+static typeof(gpi_sim_end) *gpi_sim_end_p;
+
+__attribute__((constructor))
+void libsim_ctor(void) {
+    fprintf(stderr, "libsim_ctor begin\n");
+    void *libfli_handle = dlopen("/home/jevin/code/hdl/cocotb/git/cocotb/build/libs/i686/libfli.so", RTLD_LAZY | RTLD_NOLOAD | RTLD_GLOBAL);
+    assert(libfli_handle);
+    cocotb_context_p = dlsym(libfli_handle, "cocotb_context");
+    assert(cocotb_context_p);
+    to_python_p = dlsym(libfli_handle, "to_python");
+    assert(to_python_p);
+    to_simulator_p = dlsym(libfli_handle, "to_simulator");
+    assert(to_simulator_p);
+    set_log_level_p = dlsym(libfli_handle, "set_log_level");
+    assert(set_log_level_p);
+    gpi_deregister_callback_p = dlsym(libfli_handle, "gpi_deregister_callback");
+    assert(gpi_deregister_callback_p);
+    gpi_get_definition_file_p = dlsym(libfli_handle, "gpi_get_definition_file");
+    assert(gpi_get_definition_file_p);
+    gpi_get_definition_name_p = dlsym(libfli_handle, "gpi_get_definition_name");
+    assert(gpi_get_definition_name_p);
+    gpi_get_handle_by_index_p = dlsym(libfli_handle, "gpi_get_handle_by_index");
+    assert(gpi_get_handle_by_index_p);
+    gpi_get_handle_by_name_p = dlsym(libfli_handle, "gpi_get_handle_by_name");
+    assert(gpi_get_handle_by_name_p);
+    gpi_get_num_elems_p = dlsym(libfli_handle, "gpi_get_num_elems");
+    assert(gpi_get_num_elems_p);
+    gpi_get_object_type_p = dlsym(libfli_handle, "gpi_get_object_type");
+    assert(gpi_get_object_type_p);
+    gpi_get_range_left_p = dlsym(libfli_handle, "gpi_get_range_left");
+    assert(gpi_get_range_left_p);
+    gpi_get_range_right_p = dlsym(libfli_handle, "gpi_get_range_right");
+    assert(gpi_get_range_right_p);
+    gpi_get_root_handle_p = dlsym(libfli_handle, "gpi_get_root_handle");
+    assert(gpi_get_root_handle_p);
+    gpi_get_signal_name_str_p = dlsym(libfli_handle, "gpi_get_signal_name_str");
+    assert(gpi_get_signal_name_str_p);
+    gpi_get_signal_type_str_p = dlsym(libfli_handle, "gpi_get_signal_type_str");
+    assert(gpi_get_signal_type_str_p);
+    gpi_get_signal_value_binstr_p = dlsym(libfli_handle, "gpi_get_signal_value_binstr");
+    assert(gpi_get_signal_value_binstr_p);
+    gpi_get_signal_value_long_p = dlsym(libfli_handle, "gpi_get_signal_value_long");
+    assert(gpi_get_signal_value_long_p);
+    gpi_get_signal_value_real_p = dlsym(libfli_handle, "gpi_get_signal_value_real");
+    assert(gpi_get_signal_value_real_p);
+    gpi_get_signal_value_str_p = dlsym(libfli_handle, "gpi_get_signal_value_str");
+    assert(gpi_get_signal_value_str_p);
+    gpi_get_sim_precision_p = dlsym(libfli_handle, "gpi_get_sim_precision");
+    assert(gpi_get_sim_precision_p);
+    gpi_get_sim_time_p = dlsym(libfli_handle, "gpi_get_sim_time");
+    assert(gpi_get_sim_time_p);
+    gpi_is_constant_p = dlsym(libfli_handle, "gpi_is_constant");
+    assert(gpi_is_constant_p);
+    gpi_is_indexable_p = dlsym(libfli_handle, "gpi_is_indexable");
+    assert(gpi_is_indexable_p);
+    gpi_iterate_p = dlsym(libfli_handle, "gpi_iterate");
+    assert(gpi_iterate_p);
+    gpi_log_p = dlsym(libfli_handle, "gpi_log");
+    assert(gpi_log_p);
+    gpi_next_p = dlsym(libfli_handle, "gpi_next");
+    assert(gpi_next_p);
+    gpi_register_nexttime_callback_p = dlsym(libfli_handle, "gpi_register_nexttime_callback");
+    assert(gpi_register_nexttime_callback_p);
+    gpi_register_readonly_callback_p = dlsym(libfli_handle, "gpi_register_readonly_callback");
+    assert(gpi_register_readonly_callback_p);
+    gpi_register_readwrite_callback_p = dlsym(libfli_handle, "gpi_register_readwrite_callback");
+    assert(gpi_register_readwrite_callback_p);
+    gpi_register_timed_callback_p = dlsym(libfli_handle, "gpi_register_timed_callback");
+    assert(gpi_register_timed_callback_p);
+    gpi_register_value_change_callback_p = dlsym(libfli_handle, "gpi_register_value_change_callback");
+    assert(gpi_register_value_change_callback_p);
+    gpi_set_signal_value_long_p = dlsym(libfli_handle, "gpi_set_signal_value_long");
+    assert(gpi_set_signal_value_long_p);
+    gpi_set_signal_value_real_p = dlsym(libfli_handle, "gpi_set_signal_value_real");
+    assert(gpi_set_signal_value_real_p);
+    gpi_set_signal_value_str_p = dlsym(libfli_handle, "gpi_set_signal_value_str");
+    assert(gpi_set_signal_value_str_p);
+    gpi_sim_end_p = dlsym(libfli_handle, "gpi_sim_end");
+    assert(gpi_sim_end_p);
+    dlclose(libfli_handle);
+    dlclose(libfli_handle);
+    fprintf(stderr, "libsim_ctor emd\n");
+}
+
+#undef LOG_DEBUG
+#undef LOG_INFO
+#undef LOG_WARN
+#undef LOG_ERROR
+#undef LOG_CRITICAL
+#undef FENTER
+#undef FEXIT
+#define LOG_DEBUG(...)     gpi_log_p("cocotb.gpi", GPIDebug,         __FILE__, __func__, __LINE__, __VA_ARGS__);
+#define LOG_INFO(...)      gpi_log_p("cocotb.gpi", GPIInfo,          __FILE__, __func__, __LINE__, __VA_ARGS__);
+#define LOG_WARN(...)      gpi_log_p("cocotb.gpi", GPIWarning,       __FILE__, __func__, __LINE__, __VA_ARGS__);
+#define LOG_ERROR(...)     gpi_log_p("cocotb.gpi", GPIError,         __FILE__, __func__, __LINE__, __VA_ARGS__);
+#define LOG_CRITICAL(...)  do { \
+    gpi_log_p("cocotb.gpi", GPICritical,      __FILE__, __func__, __LINE__, __VA_ARGS__); \
+    exit(1); \
+} while (0)
+
+// #ifdef DEBUG
+#define FENTER LOG_DEBUG(__func__)
+#define FEXIT  LOG_DEBUG(__func__)
+// #else
+// #define FENTER
+// #define FEXIT
+// #endif
+
 
 // Converter function for turning a Python long into a sim handle, such that it
 // can be used by PyArg_ParseTuple format O&.
@@ -121,7 +267,7 @@ static int gpi_iterator_hdl_converter(PyObject *o, gpi_iterator_hdl *data)
 int handle_gpi_callback(void *user_data)
 {
     int ret = 0;
-    to_python();
+    to_python_p();
     p_callback_data callback_data_p = (p_callback_data)user_data;
 
     if (callback_data_p->id_value != COCOTB_ACTIVE_ID) {
@@ -132,7 +278,7 @@ int handle_gpi_callback(void *user_data)
     callback_data_p->id_value = COCOTB_INACTIVE_ID;
 
     /* Cache the sim time */
-    gpi_get_sim_time(&cache_time.high, &cache_time.low);
+    gpi_get_sim_time_p(&cache_time.high, &cache_time.low);
 
     PyGILState_STATE gstate;
     gstate = TAKE_GIL();
@@ -161,7 +307,7 @@ int handle_gpi_callback(void *user_data)
             fprintf(stderr, "Failed to execute callback\n");
         }
 
-        gpi_sim_end();
+        gpi_sim_end_p();
         ret = 0;
         goto out;
     }
@@ -182,7 +328,7 @@ out:
     DROP_GIL(gstate);
 
 err:
-    to_simulator();
+    to_simulator_p();
     return ret;
 }
 
@@ -197,7 +343,7 @@ static PyObject *log_msg(PyObject *self, PyObject *args)
     if (!PyArg_ParseTuple(args, "sssis", &name, &path, &funcname, &lineno, &msg))
         return NULL;
 
-    gpi_log(name, GPIInfo, path, funcname, lineno, msg);
+    gpi_log_p(name, GPIInfo, path, funcname, lineno, msg);
 
     return Py_BuildValue("s", "OK!");
 }
@@ -249,7 +395,7 @@ static PyObject *register_readonly_callback(PyObject *self, PyObject *args)
     callback_data_p->args = fArgs;
     callback_data_p->kwargs = NULL;
 
-    hdl = gpi_register_readonly_callback((gpi_function_t)handle_gpi_callback, callback_data_p);
+    hdl = gpi_register_readonly_callback_p((gpi_function_t)handle_gpi_callback, callback_data_p);
 
     PyObject *rv = PyLong_FromVoidPtr(hdl);
     FEXIT
@@ -301,7 +447,7 @@ static PyObject *register_rwsynch_callback(PyObject *self, PyObject *args)
     callback_data_p->args = fArgs;
     callback_data_p->kwargs = NULL;
 
-    hdl = gpi_register_readwrite_callback((gpi_function_t)handle_gpi_callback, callback_data_p);
+    hdl = gpi_register_readwrite_callback_p((gpi_function_t)handle_gpi_callback, callback_data_p);
 
     PyObject *rv = PyLong_FromVoidPtr(hdl);
     FEXIT
@@ -353,7 +499,7 @@ static PyObject *register_nextstep_callback(PyObject *self, PyObject *args)
     callback_data_p->args = fArgs;
     callback_data_p->kwargs = NULL;
 
-    hdl = gpi_register_nexttime_callback((gpi_function_t)handle_gpi_callback, callback_data_p);
+    hdl = gpi_register_nexttime_callback_p((gpi_function_t)handle_gpi_callback, callback_data_p);
 
     PyObject *rv = PyLong_FromVoidPtr(hdl);
     FEXIT
@@ -414,7 +560,7 @@ static PyObject *register_timed_callback(PyObject *self, PyObject *args)
     callback_data_p->args = fArgs;
     callback_data_p->kwargs = NULL;
 
-    hdl = gpi_register_timed_callback((gpi_function_t)handle_gpi_callback, callback_data_p, time_ps);
+    hdl = gpi_register_timed_callback_p((gpi_function_t)handle_gpi_callback, callback_data_p, time_ps);
 
     // Check success
     PyObject *rv = PyLong_FromVoidPtr(hdl);
@@ -483,7 +629,7 @@ static PyObject *register_value_change_callback(PyObject *self, PyObject *args) 
     callback_data_p->args = fArgs;
     callback_data_p->kwargs = NULL;
 
-    hdl = gpi_register_value_change_callback((gpi_function_t)handle_gpi_callback,
+    hdl = gpi_register_value_change_callback_p((gpi_function_t)handle_gpi_callback,
                                              callback_data_p,
                                              sig_hdl,
                                              edge);
@@ -507,7 +653,7 @@ static PyObject *iterate(PyObject *self, PyObject *args)
         return NULL;
     }
 
-    result = gpi_iterate(hdl, (gpi_iterator_sel_t)type);
+    result = gpi_iterate_p(hdl, (gpi_iterator_sel_t)type);
 
     res = PyLong_FromVoidPtr(result);
 
@@ -532,7 +678,7 @@ static PyObject *next(PyObject *self, PyObject *args)
         return NULL;
     }
 
-    result = gpi_next(hdl);
+    result = gpi_next_p(hdl);
 
     // Raise StopIteration when we're done
     if (!result) {
@@ -556,7 +702,7 @@ static PyObject *get_signal_val_binstr(PyObject *self, PyObject *args)
         return NULL;
     }
 
-    result = gpi_get_signal_value_binstr(hdl);
+    result = gpi_get_signal_value_binstr_p(hdl);
     retstr = Py_BuildValue("s", result);
 
     return retstr;
@@ -572,7 +718,7 @@ static PyObject *get_signal_val_str(PyObject *self, PyObject *args)
         return NULL;
     }
 
-    result = gpi_get_signal_value_str(hdl);
+    result = gpi_get_signal_value_str_p(hdl);
     retstr = Py_BuildValue("s", result);
 
     return retstr;
@@ -588,7 +734,7 @@ static PyObject *get_signal_val_real(PyObject *self, PyObject *args)
         return NULL;
     }
 
-    result = gpi_get_signal_value_real(hdl);
+    result = gpi_get_signal_value_real_p(hdl);
     retval = Py_BuildValue("d", result);
 
     return retval;
@@ -605,7 +751,7 @@ static PyObject *get_signal_val_long(PyObject *self, PyObject *args)
         return NULL;
     }
 
-    result = gpi_get_signal_value_long(hdl);
+    result = gpi_get_signal_value_long_p(hdl);
     retval = Py_BuildValue("l", result);
 
     return retval;
@@ -622,7 +768,7 @@ static PyObject *set_signal_val_str(PyObject *self, PyObject *args)
         return NULL;
     }
 
-    gpi_set_signal_value_str(hdl, binstr);
+    gpi_set_signal_value_str_p(hdl, binstr);
     res = Py_BuildValue("s", "OK!");
 
     return res;
@@ -638,7 +784,7 @@ static PyObject *set_signal_val_real(PyObject *self, PyObject *args)
         return NULL;
     }
 
-    gpi_set_signal_value_real(hdl, value);
+    gpi_set_signal_value_real_p(hdl, value);
     res = Py_BuildValue("s", "OK!");
 
     return res;
@@ -654,7 +800,7 @@ static PyObject *set_signal_val_long(PyObject *self, PyObject *args)
         return NULL;
     }
 
-    gpi_set_signal_value_long(hdl, value);
+    gpi_set_signal_value_long_p(hdl, value);
     res = Py_BuildValue("s", "OK!");
 
     return res;
@@ -670,7 +816,7 @@ static PyObject *get_definition_name(PyObject *self, PyObject *args)
         return NULL;
     }
 
-    result = gpi_get_definition_name((gpi_sim_hdl)hdl);
+    result = gpi_get_definition_name_p((gpi_sim_hdl)hdl);
     retstr = Py_BuildValue("s", result);
 
     return retstr;
@@ -686,7 +832,7 @@ static PyObject *get_definition_file(PyObject *self, PyObject *args)
         return NULL;
     }
 
-    result = gpi_get_definition_file((gpi_sim_hdl)hdl);
+    result = gpi_get_definition_file_p((gpi_sim_hdl)hdl);
     retstr = Py_BuildValue("s", result);
 
     return retstr;
@@ -703,7 +849,7 @@ static PyObject *get_handle_by_name(PyObject *self, PyObject *args)
         return NULL;
     }
 
-    result = gpi_get_handle_by_name((gpi_sim_hdl)hdl, name);
+    result = gpi_get_handle_by_name_p((gpi_sim_hdl)hdl, name);
 
     res = PyLong_FromVoidPtr(result);
 
@@ -721,7 +867,7 @@ static PyObject *get_handle_by_index(PyObject *self, PyObject *args)
         return NULL;
     }
 
-    result = gpi_get_handle_by_index((gpi_sim_hdl)hdl, index);
+    result = gpi_get_handle_by_index_p((gpi_sim_hdl)hdl, index);
 
     value = PyLong_FromVoidPtr(result);
 
@@ -738,7 +884,7 @@ static PyObject *get_root_handle(PyObject *self, PyObject *args)
         return NULL;
     }
 
-    result = gpi_get_root_handle(name);
+    result = gpi_get_root_handle_p(name);
     if (NULL == result) {
        Py_RETURN_NONE;
     }
@@ -760,7 +906,7 @@ static PyObject *get_name_string(PyObject *self, PyObject *args)
         return NULL;
     }
 
-    result = gpi_get_signal_name_str((gpi_sim_hdl)hdl);
+    result = gpi_get_signal_name_str_p((gpi_sim_hdl)hdl);
     retstr = Py_BuildValue("s", result);
 
     return retstr;
@@ -776,7 +922,7 @@ static PyObject *get_type(PyObject *self, PyObject *args)
         return NULL;
     }
 
-    result = gpi_get_object_type((gpi_sim_hdl)hdl);
+    result = gpi_get_object_type_p((gpi_sim_hdl)hdl);
     pyresult = Py_BuildValue("i", result);
 
     return pyresult;
@@ -792,7 +938,7 @@ static PyObject *get_const(PyObject *self, PyObject *args)
         return NULL;
     }
 
-    result = gpi_is_constant((gpi_sim_hdl)hdl);
+    result = gpi_is_constant_p((gpi_sim_hdl)hdl);
     pyresult = Py_BuildValue("i", result);
 
     return pyresult;
@@ -808,7 +954,7 @@ static PyObject *get_type_string(PyObject *self, PyObject *args)
         return NULL;
     }
 
-    result = gpi_get_signal_type_str((gpi_sim_hdl)hdl);
+    result = gpi_get_signal_type_str_p((gpi_sim_hdl)hdl);
     retstr = Py_BuildValue("s", result);
 
     return retstr;
@@ -822,8 +968,8 @@ static PyObject *get_sim_time(PyObject *self, PyObject *args)
 {
     struct sim_time local_time;
 
-    if (cocotb_context) {
-        gpi_get_sim_time(&local_time.high, &local_time.low);
+    if (*cocotb_context_p) {
+        gpi_get_sim_time_p(&local_time.high, &local_time.low);
     } else {
         local_time = cache_time;
     }
@@ -839,7 +985,7 @@ static PyObject *get_precision(PyObject *self, PyObject *args)
 {
     int32_t precision;
 
-    gpi_get_sim_precision(&precision);
+    gpi_get_sim_precision_p(&precision);
 
     PyObject *retint = Py_BuildValue("i", precision);
    
@@ -856,7 +1002,7 @@ static PyObject *get_num_elems(PyObject *self, PyObject *args)
         return NULL;
     }
 
-    int elems = gpi_get_num_elems((gpi_sim_hdl)hdl);
+    int elems = gpi_get_num_elems_p((gpi_sim_hdl)hdl);
     retstr = Py_BuildValue("i", elems);
 
     return retstr;
@@ -871,9 +1017,9 @@ static PyObject *get_range(PyObject *self, PyObject *args)
         return NULL;
     }
 
-    int indexable = gpi_is_indexable((gpi_sim_hdl)hdl);
-    int rng_left  = gpi_get_range_left((gpi_sim_hdl)hdl);
-    int rng_right = gpi_get_range_right((gpi_sim_hdl)hdl);
+    int indexable = gpi_is_indexable_p((gpi_sim_hdl)hdl);
+    int rng_left  = gpi_get_range_left_p((gpi_sim_hdl)hdl);
+    int rng_right = gpi_get_range_right_p((gpi_sim_hdl)hdl);
 
     if (indexable)
         retstr = Py_BuildValue("(i,i)", rng_left, rng_right);
@@ -885,7 +1031,7 @@ static PyObject *get_range(PyObject *self, PyObject *args)
 
 static PyObject *stop_simulator(PyObject *self, PyObject *args)
 {
-    gpi_sim_end();
+    gpi_sim_end_p();
     return Py_BuildValue("s", "OK!");
 }
 
@@ -901,7 +1047,7 @@ static PyObject *deregister_callback(PyObject *self, PyObject *args)
         return NULL;
     }
 
-    gpi_deregister_callback(hdl);
+    gpi_deregister_callback_p(hdl);
 
     value = Py_BuildValue("s", "OK!");
 
@@ -918,7 +1064,7 @@ static PyObject *log_level(PyObject *self, PyObject *args)
     py_level = PyTuple_GetItem(args, 0);
     new_level = (enum gpi_log_levels)PyLong_AsLong(py_level);
 
-    set_log_level(new_level);
+    set_log_level_p(new_level);
 
     value = Py_BuildValue("s", "OK!");
 

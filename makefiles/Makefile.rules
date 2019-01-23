@@ -61,7 +61,7 @@ $(LIB_OBJ_DIR)/%.o: %.cpp
 	$(CXX) $(GXX_ARGS) -c $(INCLUDES) -o $@ $<
 
 $(LIB_DIR)/$(LIB_NAME).$(LIB_EXT): $($(LIB_NAME)_OBJS)
-	$(CC) $(GCC_ARGS) $(SO_LINKER_ARGS) -o $@ $($(LIB_NAME)_OBJS) $(ARS) $(LIBS) $(LD_PATH)
+	$(CXX) $(GCC_ARGS) $(SO_LINKER_ARGS) -o $@ $($(LIB_NAME)_OBJS) $(ARS) $(LIBS) $(LD_PATH)
 
 $(LIB_DIR)/$(LIB_NAME).$(AR_EXT): $($(LIB_NAME)_OBJS)
 	ar rc $@ $^

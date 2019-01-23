@@ -30,7 +30,7 @@ include $(SIM_ROOT)/makefiles/Makefile.inc
 
 INCLUDES    += -I$(MODELSIM_BIN_DIR)/../include
 GXX_ARGS    += -DFLI_CHECKING -DUSE_CACHE
-LIBS        := $(EXTRA_LIBS) -lgpilog -lgpi -lstdc++ -lcocotb -lcocotbutils $(PYLIBS)
+LIBS        := $(EXTRA_LIBS) -lgpilog -lgpi -lcocotb -lcocotbutils $(PYLIBS) /usr/lib/gcc/x86_64-linux-gnu/7/32/libstdc++_pic.a
 LD_PATH     := -L$(LIB_DIR) $(EXTRA_LIBDIRS)
 LIB_NAME    := libfli
 
