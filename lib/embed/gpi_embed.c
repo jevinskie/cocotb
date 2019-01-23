@@ -73,6 +73,8 @@ void embed_init_python(void)
 #define PY_SO_LIB xstr(PYTHON_SO_LIB)
 #endif
 
+    fprintf(stderr, "embed_init_python gtstate: %p\n", gtstate);
+
     // Don't initialise python if already running
     if (gtstate)
         return;

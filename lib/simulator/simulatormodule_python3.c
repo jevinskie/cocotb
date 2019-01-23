@@ -29,10 +29,14 @@ static struct PyModuleDef moduledef = {
     NULL
 };
 
+extern void libsim_init_ptrs(void);
+
 PyMODINIT_FUNC
 MODULE_ENTRY_POINT(void)
 {
     PyObject* simulator;
+
+    libsim_init_ptrs();
 
     simulator = PyModule_Create(&moduledef);
 

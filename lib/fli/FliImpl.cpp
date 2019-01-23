@@ -34,6 +34,9 @@
 #include "acc_vhdl.h"   // Messy :(
 #include "acc_user.h"
 
+#include <Python.h>
+#include "cocotb_utils.h"
+
 extern "C" {
 static FliProcessCbHdl *sim_init_cb;
 static FliProcessCbHdl *sim_finish_cb;
@@ -47,7 +50,12 @@ void ctor(void) {
 
 __attribute__((destructor))
 void dtor(void) {
-    fprintf(stderr, "fli dtor\n");
+    fprintf(stderr, "fli dtor begin\n");
+    int ret;
+    // ret = Py_FinalizeEx();
+    to_python();
+    fprintf(stderr, "Py_FinalizeEx() = %d", ret);
+    fprintf(stderr, "fli dtor end\n");
 }
 
 void FliImpl::sim_end(void)

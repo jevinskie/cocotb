@@ -101,9 +101,8 @@ static typeof(gpi_set_signal_value_real) *gpi_set_signal_value_real_p;
 static typeof(gpi_set_signal_value_str) *gpi_set_signal_value_str_p;
 static typeof(gpi_sim_end) *gpi_sim_end_p;
 
-__attribute__((constructor))
-void libsim_ctor(void) {
-    fprintf(stderr, "libsim_ctor begin\n");
+void libsim_init_ptrs(void) {
+    fprintf(stderr, "libsim_init_ptrs begin\n");
     void *libfli_handle = dlopen("/home/jevin/code/hdl/cocotb/git/cocotb/build/libs/i686/libfli.so", RTLD_LAZY | RTLD_NOLOAD | RTLD_GLOBAL);
     assert(libfli_handle);
     cocotb_context_p = dlsym(libfli_handle, "cocotb_context");
@@ -179,8 +178,14 @@ void libsim_ctor(void) {
     gpi_sim_end_p = dlsym(libfli_handle, "gpi_sim_end");
     assert(gpi_sim_end_p);
     dlclose(libfli_handle);
-    dlclose(libfli_handle);
-    fprintf(stderr, "libsim_ctor emd\n");
+    fprintf(stderr, "libsim_init_ptrs end\n");
+}
+
+__attribute__((constructor))
+void libsim_ctor(void) {
+    fprintf(stderr, "libsim_ctor begin\n");
+    // libsim_init_ptrs();
+    fprintf(stderr, "libsim_ctor end\n");
 }
 
 #undef LOG_DEBUG
