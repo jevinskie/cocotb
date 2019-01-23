@@ -26,6 +26,10 @@
 ******************************************************************************/
 
 #include "FliImpl.h"
+#include "cocotb_utils.h"
+
+#include <assert.h>
+#include <dlfcn.h>
 
 /**
  * @name    cleanup callback
@@ -132,8 +136,40 @@ FliSignalCbHdl::FliSignalCbHdl(GpiImplInterface *impl,
     m_sig_hdl = m_signal->get_handle<mtiSignalIdT>();
 }
 
+typedef void (*restartcb_t)(void*);
+
+void mti_AddRestartCB(restartcb_t cb, void *data);
+
+#ifndef SIMULATOR_SO_LIB
+#error "Must define path of libsim.so"
+#else
+#define SIM_SO_LIB xstr(SIMULATOR_SO_LIB)
+#endif
+
+__attribute__((constructor))
+void fli_ctor(void) {
+    // fprintf(stderr, "fli ctor\n");
+}
+
+__attribute__((destructor))
+void fli_dtor(void) {
+    // fprintf(stderr, "fli dtor\n");
+}
+
+void handle_restart_callback(void *data) {
+    // fprintf(stderr, "handle_restart_callback start\n");
+    embed_delete_sim_mod();
+    void *sohdl = dlopen(SIM_SO_LIB, RTLD_LAZY | RTLD_NOLOAD | RTLD_GLOBAL);
+    // fprintf(stderr, "handle_restart_callback sim handle: %p\n", sohdl);
+    assert(sohdl);
+    dlclose(sohdl);
+    dlclose(sohdl);
+    // fprintf(stderr, "handle_restart_callback end\n");
+}
+
 int FliStartupCbHdl::arm_callback(void)
 {
+    mti_AddRestartCB(handle_restart_callback,(void *)this);
     mti_AddLoadDoneCB(handle_fli_callback,(void *)this);
     set_call_state(GPI_PRIMED);
 

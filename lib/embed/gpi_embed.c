@@ -77,10 +77,12 @@ void embed_init_python(void)
     if (gtstate)
         return;
 
+    /*
     void * ret = utils_dyn_open(PY_SO_LIB);
     if (!ret) {
         fprintf(stderr, "Failed to find python lib\n");
     }
+    */
 
     to_python();
 
@@ -139,6 +141,37 @@ void embed_init_python(void)
     }
 out:
     FEXIT;
+}
+
+void embed_delete_sim_mod(void) {
+    // int ret = 243;
+    // fprintf(stderr, "embed_delete_sim_mod begin\n");
+    PyGILState_Ensure();
+    // ret = PyRun_SimpleString("import simulator; del simulator\n");
+    // ret = PyRun_SimpleString("import sys\ndel sys.modules['simulator']\n");
+    // PyObject *mod_dict = PyImport_GetModuleDict();
+    // assert(mod_dict);
+    // fprintf(stderr, "del cocotb ret: %d\n", ret);
+    Py_Finalize();
+    // fprintf(stderr, "Py_FinalizeEx ret: %d\n", ret);
+    // fprintf(stderr, "embed_delete_sim_mod begin\n");
+}
+
+__attribute__((destructor))
+void embed_dtor(void) {
+    // int ret = 243;
+    // fprintf(stderr, "embed_dtor begin\n");
+    /*
+    PyGILState_Ensure();
+    // ret = PyRun_SimpleString("import simulator; del simulator\n");
+    // ret = PyRun_SimpleString("import sys\ndel sys.modules['simulator']\n");
+    PyObject *mod_dict = PyImport_GetModuleDict();
+    assert(mod_dict);
+    fprintf(stderr, "del cocotb ret: %d\n", ret);
+    ret = Py_FinalizeEx();
+    fprintf(stderr, "Py_FinalizeEx ret: %d\n", ret);
+    */
+    // fprintf(stderr, "embed_dtor end\n");
 }
 
 
@@ -349,7 +382,7 @@ ok:
         Py_DECREF(cocotb_module);
     }
     if (arg_dict) {
-        Py_DECREF(arg_dict);
+        // Py_DECREF(arg_dict);
     }
     PyGILState_Release(gstate);
     to_simulator();

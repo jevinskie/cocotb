@@ -62,6 +62,9 @@ export INCLUDES := -I$(SIM_ROOT)/include -I$(PYTHON_INCLUDEDIR)
 
 LIB_EXT     := so
 PY_EXT	    := so
+AR_EXT      := a
+
+export SIM_DYN_LIB := $(BUILD_DIR)/libs/$(ARCH)/libsim.$(LIB_EXT)
 
 # Base GCC flags
 ifeq ($(ARCH),i686)

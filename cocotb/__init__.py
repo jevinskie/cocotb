@@ -75,10 +75,10 @@ if "SPHINX_BUILD" not in os.environ:
     # appear. Continue silently if this fails.
     try:
         if not sys.stdout.isatty():
-            sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 1)
+            sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 1, closefd=False)
             log.debug("Reopened stdout with line buffering")
         if not sys.stderr.isatty():
-            sys.stderr = os.fdopen(sys.stderr.fileno(), 'w', 1)
+            sys.stderr = os.fdopen(sys.stderr.fileno(), 'w', 1, closefd=False)
             log.debug("Reopened stderr with line buffering")
     except Exception as e:
         log.warning("Failed to ensure that stdout/stderr are line buffered: %s", e)

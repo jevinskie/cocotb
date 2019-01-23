@@ -34,7 +34,7 @@ SRCS		:= cocotb_utils.c
 
 LIB_NAME	:= libcocotbutils
 
-all: $(LIB_DIR)/$(LIB_NAME).$(LIB_EXT)
+all: $(LIB_DIR)/$(LIB_NAME).$(AR_EXT)
 
 clean:
 	-@rm -rf $(OBJ_DIR)

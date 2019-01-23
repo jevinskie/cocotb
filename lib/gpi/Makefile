@@ -37,9 +37,9 @@ LIB_NAME    := libgpi
 
 SRCS        := GpiCbHdl.cpp GpiCommon.cpp
 
-all: $(LIB_DIR)/$(LIB_NAME).$(LIB_EXT)
+all: $(LIB_DIR)/$(LIB_NAME).$(AR_EXT)
 
 clean:
-	-@rm -rf $(LIB_DIR)/$(LIB_NAME).$(LIB_EXT)
+	-@rm -rf $(LIB_DIR)/$(LIB_NAME).$(AR_EXT)
 
 include $(SIM_ROOT)/makefiles/Makefile.rules

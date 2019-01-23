@@ -45,24 +45,8 @@ extern void* utils_dyn_sym(void *handle, const char* sym_name);
 
 extern int context;
 
-void to_python(void) {
-    if (context) {
-        fprintf(stderr, "FATAL: We are calling up again\n");
-        exit(1);
-    }
-    ++context;
-    //fprintf(stderr, "INFO: Calling up to python %d\n", context);
-}
-
-void to_simulator(void) {
-    if (!context) {
-        fprintf(stderr, "FATAL: We have returned twice from python\n");
-        exit(1);
-    }
-
-    --context;
-    //fprintf(stderr, "INFO: Returning back to simulator %d\n", context);
-}
+extern void to_python(void);
+extern void to_simulator(void);
 
 #ifdef __cplusplus
 }

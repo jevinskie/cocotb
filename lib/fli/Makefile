@@ -29,8 +29,8 @@
 include $(SIM_ROOT)/makefiles/Makefile.inc
 
 INCLUDES    += -I$(MODELSIM_BIN_DIR)/../include
-GXX_ARGS    += -DFLI_CHECKING -DUSE_CACHE
-LIBS        := $(EXTRA_LIBS) -lgpilog -lgpi -lstdc++
+GXX_ARGS    += -DFLI_CHECKING -DUSE_CACHE -DSIMULATOR_SO_LIB=$(SIM_DYN_LIB)
+LIBS        := $(EXTRA_LIBS) -lgpilog -lgpi -lcocotb -lcocotbutils -lstdc++ $(PYLIBS)
 LD_PATH     := -L$(LIB_DIR) $(EXTRA_LIBDIRS)
 LIB_NAME    := libfli
 
