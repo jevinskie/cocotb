@@ -53,7 +53,7 @@ void ctor(void) {
 std::vector<std::string> to_unload;
 
 int dl_cb(struct dl_phdr_info *info, size_t size, void *data) {
-    fprintf(stderr, "dl_cb name: %s\n", info->dlpi_name);
+    // fprintf(stderr, "dl_cb name: %s\n", info->dlpi_name);
     std::string name(info->dlpi_name);
     if (name.find("lib-dynload") != std::string::npos || name.find("simulator.so") != std::string::npos) {
         to_unload.push_back(name);
@@ -70,7 +70,7 @@ void dtor(void) {
     // ret = Py_FinalizeEx();
     // to_python();
     for (const auto &so : to_unload) {
-        fprintf(stderr, "fli dtor unloading %s\n", so.data());
+        // fprintf(stderr, "fli dtor unloading %s\n", so.data());
         void *sohdl = dlopen(so.data(), RTLD_LAZY | RTLD_NOLOAD | RTLD_GLOBAL);
         dlclose(sohdl);
         dlclose(sohdl);
