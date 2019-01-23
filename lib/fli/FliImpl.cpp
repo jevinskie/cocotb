@@ -75,6 +75,11 @@ void dtor(void) {
         dlclose(sohdl);
         dlclose(sohdl);
     }
+    PyGILState_STATE state = PyGILState_Ensure();
+    // ret = PyRun_SimpleString("import sys\nimport cocotb\ndel sys.modules['cocotb']\ndel cocotb");
+    fprintf(stderr, "del cocotb = %d\n", ret);
+    ret = Py_FinalizeEx();
+    // to_python();
     fprintf(stderr, "Py_FinalizeEx() = %d\n", ret);
     fprintf(stderr, "fli dtor end\n");
 }

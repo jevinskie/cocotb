@@ -363,7 +363,7 @@ ok:
         Py_DECREF(cocotb_module);
     }
     if (arg_dict) {
-        Py_DECREF(arg_dict);
+        // Py_DECREF(arg_dict);
     }
     PyGILState_Release(gstate);
     to_simulator();
