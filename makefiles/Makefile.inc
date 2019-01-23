@@ -84,7 +84,7 @@ else ifeq ($(OS),Linux)
 #GXX_ARGS	+= -Werror -Wcast-qual -Wcast-align -Wwrite-strings \\
 GXX_ARGS	+= -Wcast-qual -Wcast-align -Wwrite-strings \
 			-Wall -Wno-unused-parameter \
-			-fno-common -g -DDEBUG -fpic -fno-gnu-unique
+			-fno-common -g -DDEBUG -fpic -fno-gnu-unique -std=gnu++11
 GCC_ARGS	+= $(GXX_ARGS) -Wstrict-prototypes -Waggregate-return
 else
 $(error "Unsupported os " $(OS))

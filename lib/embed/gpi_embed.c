@@ -87,6 +87,7 @@ void embed_init_python(void)
     */
 
     to_python();
+    // PyGILState_STATE state = PyGILState_Ensure();
 
     // reset Program Name (i.e. argv[0]) if we are in a Python virtual environment
     char *venv_path_home = getenv("VIRTUAL_ENV");

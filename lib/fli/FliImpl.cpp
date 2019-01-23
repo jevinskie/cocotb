@@ -36,6 +36,8 @@
 
 #include <Python.h>
 #include "cocotb_utils.h"
+#include <dlfcn.h>
+#include <link.h>
 
 extern "C" {
 static FliProcessCbHdl *sim_init_cb;
@@ -48,14 +50,32 @@ void ctor(void) {
     fprintf(stderr, "fli ctor\n");
 }
 
+std::vector<std::string> to_unload;
+
+int dl_cb(struct dl_phdr_info *info, size_t size, void *data) {
+    fprintf(stderr, "dl_cb name: %s\n", info->dlpi_name);
+    std::string name(info->dlpi_name);
+    if (name.find("lib-dynload") != std::string::npos || name.find("simulator.so") != std::string::npos) {
+        to_unload.push_back(name);
+    }
+    return 0;
+}
+
 __attribute__((destructor))
 void dtor(void) {
     fprintf(stderr, "fli dtor begin\n");
     int ret = 243;
+    dl_iterate_phdr(dl_cb, NULL);
     // PyGILState_STATE state = PyGILState_Ensure();
     // ret = Py_FinalizeEx();
     // to_python();
-    fprintf(stderr, "Py_FinalizeEx() = %d", ret);
+    for (const auto &so : to_unload) {
+        fprintf(stderr, "fli dtor unloading %s\n", so.data());
+        void *sohdl = dlopen(so.data(), RTLD_LAZY | RTLD_NOLOAD | RTLD_GLOBAL);
+        dlclose(sohdl);
+        dlclose(sohdl);
+    }
+    fprintf(stderr, "Py_FinalizeEx() = %d\n", ret);
     fprintf(stderr, "fli dtor end\n");
 }
 
