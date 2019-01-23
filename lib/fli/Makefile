@@ -31,7 +31,7 @@ include $(SIM_ROOT)/makefiles/Makefile.inc
 INCLUDES    += -I$(MODELSIM_BIN_DIR)/../include
 GXX_ARGS    += -DFLI_CHECKING -DUSE_CACHE
 # LIBS        := $(EXTRA_LIBS) -lgpilog -lgpi -lstdc++
-LIBS        :=  -lpython3.7m -lgpi
+LIBS        :=  $(PYLIBS) -lgpi
 # LD_PATH     := -L$(LIB_DIR) $(EXTRA_LIBDIRS)
 LD_PATH     := -L /home/jevin/base/python/3.7.2-32/lib -L$(LIB_DIR)
 LIB_NAME    := libfli
