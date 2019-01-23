@@ -51,9 +51,10 @@ void ctor(void) {
 __attribute__((destructor))
 void dtor(void) {
     fprintf(stderr, "fli dtor begin\n");
-    int ret;
+    int ret = 243;
+    // PyGILState_STATE state = PyGILState_Ensure();
     // ret = Py_FinalizeEx();
-    to_python();
+    // to_python();
     fprintf(stderr, "Py_FinalizeEx() = %d", ret);
     fprintf(stderr, "fli dtor end\n");
 }

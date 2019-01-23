@@ -114,7 +114,7 @@ else
 	@echo "onbreak resume" >> $@
 	#@echo "run -all" >> $@
 	#@echo "quit" >> $@
-	#@echo "restart" >> $@
+	@echo "restart" >> $@
 endif
 
 ifeq ($(OS),Msys)
