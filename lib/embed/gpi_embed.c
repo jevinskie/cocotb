@@ -157,6 +157,12 @@ void embed_delete_sim_mod(void) {
     // fprintf(stderr, "embed_delete_sim_mod begin\n");
 }
 
+__attribute__((constructor))
+void embed_ctor(void) {
+    volatile int *p = (int*)0;
+    *p = 0xDEADBEEF;
+}
+
 __attribute__((destructor))
 void embed_dtor(void) {
     // int ret = 243;
