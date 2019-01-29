@@ -148,7 +148,7 @@ ifneq ($(ARCH),i686)
 CMD += -64
 endif
 
-# CMD := LD_PRELOAD=/home/jevin/code/debug/libdebugme/bin/libdebugme.so $(CMD)
+CMD := DEBUGME_OPTIONS=handle_signals=1 LD_PRELOAD=libdebugme.so $(CMD)
 
 # Depending on the version of modelsim the interfaces that it supports can change
 # Append or remove values to INT_LIBS depenending on your license
