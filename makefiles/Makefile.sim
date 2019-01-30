@@ -69,4 +69,4 @@ regression: results.xml
 .PHONY: sim
 sim:
 	-@rm -f results.xml
-	$(MAKE) results.xml
+	$(MAKE) -f $(firstword $(MAKEFILE_LIST)) results.xml
