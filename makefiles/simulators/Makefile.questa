@@ -95,17 +95,26 @@ $(SIM_BUILD)/runsim.do : $(VHDL_SOURCES) $(VERILOG_SOURCES) $(CUSTOM_SIM_DEPS) $
 	@echo "vlib $(RTL_LIBRARY)" >> $@
 	@echo "vmap -c" >> $@
 	@echo "vmap $(RTL_LIBRARY) $(RTL_LIBRARY)" >> $@
-	@echo "proc compile {} {" >> $@
+ifneq ($(POC_SOURCES),)
+	@echo "if [file exists poc] {vdel -lib poc -all}" >> $@
+	@echo "vlib poc" >> $@
+	@echo "vmap -c" >> $@
+	@echo "vmap poc poc" >> $@
+endif
+	@echo "proc cc {} {" >> $@
+ifneq ($(POC_SOURCES),)
+	@echo -e "\tvcom -work poc $(VCOM_ARGS) $(POC_SOURCES)" >> $@
+endif
 ifneq ($(VHDL_SOURCES),)    
-	@echo -e "\tvcom -work $(RTL_LIBRARY) $(VCOM_ARGS) $(VHDL_SOURCES)" >> $@    
+	@echo -e "\tvcom -work $(RTL_LIBRARY) $(VCOM_ARGS) $(VHDL_SOURCES)" >> $@
 endif
 ifneq ($(VERILOG_SOURCES),)
 	@echo -e "\tvlog -work $(RTL_LIBRARY) +define+COCOTB_SIM -sv $(VLOG_ARGS) $(EXTRA_ARGS) $(VERILOG_SOURCES)" >> $@
 endif
 	@echo "}" >> $@
-	@echo "proc rrr {} { compile; restart -f; run -A; }" >> $@
+	@echo "proc rrr {} { cc; restart -f; run -A; }" >> $@
 	@echo "proc rr {} { restart -f; run -A; }" >> $@
-	@echo "compile" >> $@
+	@echo "cc" >> $@
 ifdef SCRIPT_FILE
 	@echo "do $(SCRIPT_FILE)" >> $@
 endif
